@@ -1,7 +1,13 @@
 import { LightningElement } from 'lwc';
 import searchWithSpotify from '@salesforce/apex/spotifyIntegrationController.searchWithSpotify';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+
 export default class SpotifySearch extends LightningElement {
     selectedTrack='';
+    displayResult=false;
+    trackData='';
+    trackURL=''
+  //  trackArtists='';
     changeHandler(event){
         this.selectedTrack=event.target.value;
     }
@@ -10,9 +16,16 @@ export default class SpotifySearch extends LightningElement {
     if(isValid){
         try{
 
-            let response= await searchWithSpotify({
+            let responseString= await searchWithSpotify({
                 trackName:this.selectedTrack
             })
+            let response =JSON.parse(responseString);
+            console.log('response',response);
+            this.trackData=response.tracks.items[0];
+            this.trackURL=this.trackData.album.images[0].url;
+           // this.trackArtists=this.trackData.artists[0].name;
+            this.displayResult=true;
+            console.log('display comp',this.displayResult);
         }catch(error){
             console.log(error);
             this.showToast('Error','Something went wrong','error')
@@ -30,12 +43,18 @@ export default class SpotifySearch extends LightningElement {
         return isValid;
     }
     showToast(title,message,variant){
-        const event = new showToastEvent({
+        const event = new ShowToastEvent({
             title: title,
             message:message,
             variant:variant
 
         });
         this.dispatchEvent(event);
+    }
+
+    get artistsName(){
+        let artistArray=this.trackData.artists.map(currItem=>currItem.name);
+        let artistNameString =artistArray.join(", ");
+        return artistNameString;
     }
 }
