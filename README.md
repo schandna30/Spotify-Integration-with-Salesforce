@@ -25,6 +25,6 @@ When a user clicks the track or album link, it **redirects to Spotify in a new b
 ---
 ## 🖼️ Screenshot
 
-![Movie Details UI](./MovieSearchLWC/assets/movieapp.png)
+![Spotify Integration](./SpotifyIntegration/assets/Spotify.png)
 
 
